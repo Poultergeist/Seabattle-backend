@@ -7,16 +7,6 @@ import { User } from '../entities/User';
  * @interface UserRepository
  */
 export interface UserRepository {
-  /**
-   * Creates user by given User data structure
-   *
-   * @param {User} user
-   * @return
-   * `number` - new user's id
-   * `-1` - user already exists
-   * `null` - error while creating user
-   * @memberof UserRepository
-   */
   create(user: User): Promise<number | null>;
   findByUsername(username: string): Promise<User | null>;
   findById(id: number): Promise<User | null>;
