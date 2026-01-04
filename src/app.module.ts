@@ -2,10 +2,13 @@ import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
+import { UsersController } from './users/users.controller';
+import { UsersModule } from './users/users.module';
+import { TypeOrmPrersistenceModule } from './infrastructure/persistence/typeorm/typeorm.module';
 
 @Module({
-  imports: [AuthModule],
-  controllers: [AppController],
+  imports: [TypeOrmPrersistenceModule, AuthModule, UsersModule],
+  controllers: [AppController, UsersController],
   providers: [AppService],
 })
 export class AppModule {}
