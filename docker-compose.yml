@@ -1,0 +1,33 @@
+version: '3.9'
+
+services:
+  database:
+    image: postgres:15
+    env_file:
+      - .env
+    environment:
+      POSTGRES_DB: "${DB_DATABASE}"
+      POSTGRES_USER: "${DB_USER}"
+      POSTGRES_PASSWORD: "${DB_PASSWORD}"
+    ports:
+      - "${DB_PORT}:5432"
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+  
+  db_manager:
+    image: adminer
+    env_file:
+      - .env
+    ports:
+      - "${DB_MANAGER_PORT}:8080"
+    depends_on:
+      database:
+        condition: service_healthy
+
+volumes:
+  db_data:
