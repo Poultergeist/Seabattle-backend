@@ -24,8 +24,9 @@ jobs:
           cache: pnpm
 
       - run: corepack enable
-      - run: pnpm install --prod --frozen-lockfile
+      - run: pnpm install --frozen-lockfile
       - run: pnpm build
+      - run: pnpm prune --prod
 
       - name: Prepare artifact
         run: |
