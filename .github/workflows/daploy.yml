@@ -31,7 +31,7 @@ jobs:
       - name: Prepare artifact
         run: |
           mkdir artifact
-          cp -r dist node_modules package.json pnpm-lock.yml Dockerfile docker-compose.production.yml artifact/
+          cp -r dist node_modules package.json pnpm-lock.yaml Dockerfile docker-compose.production.yml artifact/
 
       - uses: actions/upload-artifact@v4
         with:
