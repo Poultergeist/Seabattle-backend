@@ -65,22 +65,22 @@ jobs:
       - name: Create .env and run docker compose
         run: |
           ssh -p ${{ secrets.SERVER_PORT }} ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }} << 'EOF'
-            cd /var/www/seabattle/back
-
-            cat > .env << 'EOT'
-            DB_DATABASE=&{{ secrets.DB_DATABASE }}
-            DB_USER=&{{ secrets.DB_USER }}
-            DB_PASSWORD=${{ secrets.DB_PASSWORD }}
-            DB_PORT=${{ secrets.DB_PORT }}
-            DB_HOST=${{ secrets.DB_HOST }}
-
-            DB_MANAGER_PORT=${{ secrets.DB_MANAGER_PORT }}
-
-            PORT=${{ secrets.PORT }}
-
-            JWT_SECRET=${{ secrets.JWT_SECRET }}
-            JWT_EXPIRATION=${{ secrets.JWT_EXPIRATION }}
-            EOT
-
-            docker compose -f docker-compose.production.yml up -d --build
+          cd /var/www/seabattle/back
+          
+          cat > .env << 'EOT'
+          DB_DATABASE=${{ secrets.DB_DATABASE }}
+          DB_USER=${{ secrets.DB_USER }}
+          DB_PASSWORD=${{ secrets.DB_PASSWORD }}
+          DB_PORT=${{ secrets.DB_PORT }}
+          DB_HOST=${{ secrets.DB_HOST }}
+          
+          DB_MANAGER_PORT=${{ secrets.DB_MANAGER_PORT }}
+          
+          PORT=${{ secrets.PORT }}
+          
+          JWT_SECRET=${{ secrets.JWT_SECRET }}
+          JWT_EXPIRATION=${{ secrets.JWT_EXPIRATION }}
+          EOT
+          
+          docker compose -f docker-compose.production.yml up -d --build
           EOF
