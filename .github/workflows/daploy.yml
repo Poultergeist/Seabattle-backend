@@ -1,0 +1,80 @@
+name: Deploy backend to the server
+
+on:
+  push:
+    branches:
+     - main
+
+jobs:
+  build:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Setup node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: pnpm
+
+      - run: corepack enable
+      - run: pnpm install --prod --frozen-lockfile
+      - run: pnpm build
+
+      - name: Prepare artifact
+        run: |
+          mkdir artifact
+          cp -r dist node_modules package.json artifact/
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: nest-app
+          path: artifact
+          
+  deploy:
+    needs: build
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Download artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: nest-app
+          path: artifact
+
+      - name: Setup SSH
+        uses: webfactory/ssh-agent@v0.9.1
+        with:
+          ssh-private-key: ${{ secrets.SERVER_KEY }}
+
+      - name: Add server to known_hosts
+        run: |
+          mkdir -p ~/.ssh
+          ssh-keyscan -p ${{ secrets.SERVER_PORT }} ${{ secrets.SERVER_HOST }} >> ~/.ssh/known_hosts
+
+      - name: Deploy via rsync
+        run: |
+          rsync -avz -e "ssh -p ${{ secrets.SERVER_PORT }}" dist/ ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }}:/var/www/seabattle/back
+
+      - name: Create .env and run docker compose
+        run: |
+          ssh -p ${{ secrets.SERVER_PORT }} ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }} << 'EOF'
+            cd /var/www/seabattle/back
+
+            cat > .env << 'EOT'
+            DB_DATABASE=&{{ secrets.DB_DATABASE }}
+            DB_USER=&{{ secrets.DB_USER }}
+            DB_PASSWORD=${{ secrets.DB_PASSWORD }}
+            DB_PORT=${{ secrets.DB_PORT }}
+            DB_HOST=${{ secrets.DB_HOST }}
+
+            DB_MANAGER_PORT=${{ secrets.DB_MANAGER_PORT }}
+
+            PORT=${{ secrets.PORT }}
+
+            JWT_SECRET=${{ secrets.JWT_SECRET }}
+            JWT_EXPIRATION=${{ secrets.JWT_EXPIRATION }}
+            EOT
+
+            docker compose -f docker-compose.production.yml up -d --build
+          EOF
