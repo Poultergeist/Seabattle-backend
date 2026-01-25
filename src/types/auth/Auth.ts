@@ -1,10 +1,10 @@
 import * as Swagger from '@nestjs/swagger';
 export class AuthResponseDto {
   @Swagger.ApiProperty({
-    description: 'User JWT token for acces to site',
-    example: 'iksdkd.asdf...asdf.fdsasd',
+    description: 'Authentication success status',
+    example: true,
   })
-  token: string;
+  success: boolean;
 }
 
 export class AuthErrorResponseDto {

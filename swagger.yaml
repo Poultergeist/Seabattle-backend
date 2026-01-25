@@ -125,12 +125,12 @@ components:
     AuthResponseDto:
       type: object
       properties:
-        token:
-          type: string
-          description: User JWT token for acces to site
-          example: iksdkd.asdf...asdf.fdsasd
+        success:
+          type: boolean
+          description: Authentication success status
+          example: true
       required:
-        - token
+        - success
     AuthErrorResponseDto:
       type: object
       properties:
