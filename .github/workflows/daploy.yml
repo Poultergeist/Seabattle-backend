@@ -60,7 +60,7 @@ jobs:
 
       - name: Deploy via rsync
         run: |
-          rsync -avz -e "ssh -p ${{ secrets.SERVER_PORT }}" dist/ ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }}:/var/www/seabattle/back
+          rsync -avz -e "ssh -p ${{ secrets.SERVER_PORT }}" artifact/ ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }}:/var/www/seabattle/back
 
       - name: Create .env and run docker compose
         run: |
